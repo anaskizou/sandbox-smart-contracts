@@ -416,25 +416,5 @@ describe('AssetMinter', function () {
         mintMultiOptions.data
       );
     });
-
-    // test "BURN_O_TOKENS"
-    // @note this may fail silently with addition of conditionals in bugfix pr !
-    it.skip('mintMultiple should fail if trying to burn 0 tokens', async function () {
-      await expect(
-        assetMinterAsCatalystOwner.mintMultiple(
-          catalystOwner,
-          mintMultiOptions.packId,
-          mintMultiOptions.metadataHash,
-          [],
-          mintMultiOptions.catalystsQuantities,
-          mintMultiOptions.assets,
-          catalystOwner,
-          mintMultiOptions.data
-        )
-      ).to.be.revertedWith('BURN_O_TOKENS');
-    });
-
-    // test: gemsQuantities.length != 5 (ie: 4, 6)
-    // test: catalystsQuantities.length != 4 (ie: 3, 5)
   });
 });
