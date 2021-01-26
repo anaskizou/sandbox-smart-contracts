@@ -354,19 +354,6 @@ describe('AssetMinter', function () {
     });
 
     it('mintMultiple should fail if trying to add too many gems', async function () {
-      // const {
-      //   catalystOwner,
-      //   rareCatalyst,
-      //   powerGem,
-      //   speedGem,
-      // } = await setupGemsAndCatalysts();
-
-      // await mintGem(
-      //   speedGem,
-      //   BigNumber.from('1').mul(BigNumber.from(gemsCatalystsUnit)),
-      //   catalystOwner
-      // );
-
       await expect(
         assetMinterAsCatalystOwner.mintMultiple(
           catalystOwner,
@@ -387,19 +374,47 @@ describe('AssetMinter', function () {
       ).to.be.revertedWith('INVALID_GEMS_TOO_MANY');
     });
 
-    it.skip('mintMultiple should fail if catalystId == 0', async function () {
+    it('mintMultiple should fail if trying to add too few gems', async function () {
       await expect(
         assetMinterAsCatalystOwner.mintMultiple(
           catalystOwner,
           mintMultiOptions.packId,
           mintMultiOptions.metadataHash,
-          [],
-          mintMultiOptions.catalystsQuantities,
-          mintMultiOptions.assets,
+          // only allowing 2 powerGems here, but trying to add 3 in assets[]
+          [2, 0, 0, 0, 0],
+          [1, 0, 0, 0],
+          [
+            {
+              gemIds: [1, 1, 1],
+              quantity: 1,
+              catalystId: 3,
+            },
+          ],
           catalystOwner,
           mintMultiOptions.data
         )
-      ).to.be.revertedWith('CATALYST_DOES_NOT_EXIST');
+      ).to.be.revertedWith('INVALID_GEMS_NOT_ENOUGH');
+    });
+
+    // @note This won't revert, but the assets minted will have no catalyst set.
+    // Finish test by checking the contract state
+    it('mintMultiple should not set catalyst if catalystId == 0', async function () {
+      await assetMinterAsCatalystOwner.mintMultiple(
+        catalystOwner,
+        mintMultiOptions.packId,
+        mintMultiOptions.metadataHash,
+        [],
+        mintMultiOptions.catalystsQuantities,
+        [
+          {
+            gemIds: [1],
+            quantity: 1,
+            catalystId: 0,
+          },
+        ],
+        catalystOwner,
+        mintMultiOptions.data
+      );
     });
 
     // test "BURN_O_TOKENS"
