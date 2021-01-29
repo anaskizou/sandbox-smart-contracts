@@ -761,26 +761,27 @@ describe('AssetMinter', function () {
         mintMultiOptions.data
       );
 
-      const catalystAppliedEvents = await assetAttributesRegistry.queryFilter(
-        assetAttributesRegistry.filters.CatalystApplied()
-      );
+      // function findEvents(
+      //   contract: Contract,
+      //   event: string,
+      //   blockHash: string
+      // ): Promise<Event[]> {
+      //   const filter = contract.filters[event]();
+      //   const events = await contract.queryFilter(filter, blockHash);
+      //   return events;
+      // }
 
-      console.log(`num of event: ${catalystAppliedEvents.length}`);
-      console.log(`catalystAppliedEvents: ${catalystAppliedEvents}`);
+      const catalystAppliedEvents = await findEvents(
+        assetAttributesRegistry,
+        'CatalystApplied',
+        receipt.blockHash
+      );
       expect(catalystAppliedEvents).to.have.lengthOf(3);
 
-      const event1 = await catalystAppliedEvents.filter(
-        (e) => e.event === 'CatalystApplied'
-      )[0];
-      const event2 = await catalystAppliedEvents.filter(
-        (e) => e.event === 'CatalystApplied'
-      )[1];
-      const event3 = await catalystAppliedEvents.filter(
-        (e) => e.event === 'CatalystApplied'
-      )[2];
-      console.log(`event1: ${event1.args}`);
-      console.log(`event2: ${event2.args}`);
-      console.log(`event3: ${event3.args}`);
+      for (const event of catalystAppliedEvents) {
+        console.log(`event:${event}`);
+        // do stuff ...
+      }
 
       // @note iterate over catalystAppliedEvents for these assertions
       // event CatalystApplied(uint256 indexed assetId, uint16 indexed catalystId, uint16[] gemIds, uint64 blockNumber);
